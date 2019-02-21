@@ -101,20 +101,22 @@ function appendPre(message) {
 //  * appropriate message is printed.
 //  */
 function listUpcomingEvents() {
-    //Pull busy results for this week
-  gapi.client.calendar.freebusy.query({
+  //Pull busy results for this week
+  gapi.client.calendar.freebusy
+    .query({
       timeMin: new Date().toISOString(),
-      timeMax: getEndWeek(new Date()),
-      timeZone:"America/Chicago",
-      items: [{id: "primary"}]
-  }).then(function(response){
+      timeMax: sevenDays(),
+      timeZone: "America/Chicago",
+      items: [{ id: "primary" }]
+    })
+    .then(function(response) {
       console.log(response);
-  })
+    });
   gapi.client.calendar.events
     .list({
       calendarId: "primary",
       timeMin: new Date().toISOString(),
-      timeMax: "2019-02-28T19:29:23.000Z", //Need to make this dynamic for 7 days - getting an error
+      timeMax: sevenDays(), //Need to make this dynamic for 7 days - getting an error
       showDeleted: false,
       singleEvents: true,
       orderBy: "startTime"
@@ -142,22 +144,24 @@ function listUpcomingEvents() {
 ///// My work
 //
 
+
 //returns the date of the end of this current week
-function getEndWeek(d){
-    d = new Date(d); 
-    let sevenDays = d.getDate() + 7;
-    return new Date(d.setDate(sevenDays));
-}
+
+function sevenDays(){
+    let date = new Date();
+    date.setDate(date.getDate() + 7);
+    return date.toISOString();
+    }
 
 let event = {
   summary: "",
   location: "5107 Avenue G. Austin Texas",
   description: "A chance to hear more about Google's developer products.",
   start: {
-    dateTime: "",
+    dateTime: ""
   },
   end: {
-    dateTime: "",
+    dateTime: ""
   }
 };
 
