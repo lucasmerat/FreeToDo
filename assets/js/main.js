@@ -138,11 +138,9 @@
       description: "A chance to hear more about Google's developer products.",
       start: {
         dateTime: "",
-        timeZone: "America/New_York"
       },
       end: {
         dateTime: "",
-        timeZone: "America/New_York"
       }
     };
 
@@ -167,8 +165,9 @@
         //When duration is hours, add num of hours to date string for end date
         if (duration === '1' || duration === '2'){
             let startTime = Number(startDate.substr(11,2));
-            let endTime = startTime + duration;
+            let endTime = startTime + Number(duration);
             let endDate = startDate.substr(0,11) + String(endTime) + startDate.substr(13, startDate.length);
+            console.log(startDate, endDate)
             createEvent(startDate, endDate)
         //When in minutes, add those minutes to string
         } else if (duration === '30'){
@@ -183,5 +182,8 @@
     newEventButton.addEventListener("click", getDates);
     $("#date").flatpickr({
       enableTime: true,
+      altInput: true, 
+      time_24hr: false,
+      altFormat: "F j, Y H:i",
       dateFormat: "Y-m-dTH:i:00-07:00"
     });
