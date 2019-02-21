@@ -1,33 +1,33 @@
 // Client ID and API key from the Developer Console
-var CLIENT_ID =
+let CLIENT_ID =
   "26822503413-ladr99bfvg408ec73jpa5tdhecgboehe.apps.googleusercontent.com";
-var API_KEY = "AIzaSyBpArWGtpMF-RUiodjnwqk8lTmlSmJxrAQ";
+let API_KEY = "AIzaSyBpArWGtpMF-RUiodjnwqk8lTmlSmJxrAQ";
 
 // Array of API discovery doc URLs for APIs used by the quickstart
-var DISCOVERY_DOCS = [
+let DISCOVERY_DOCS = [
   "https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"
 ];
 
 // Authorization scopes required by the API; multiple scopes can be
 // included, separated by spaces.
-var SCOPES = "https://www.googleapis.com/auth/calendar";
+let SCOPES = "https://www.googleapis.com/auth/calendar";
 
-var authorizeButton = document.getElementById("authorize_button");
-var signoutButton = document.getElementById("signout_button");
-var newEventBox = document.getElementById("new-event-box");
-var newEventButton = document.getElementById("new_event");
+let authorizeButton = document.getElementById("authorize_button");
+let signoutButton = document.getElementById("signout_button");
+let newEventBox = document.getElementById("new-event-box");
+let newEventButton = document.getElementById("new_event");
 
-/**
- *  On load, called to load the auth2 library and API client library.
- */
+// /**
+//  *  On load, called to load the auth2 library and API client library.
+//  */
 function handleClientLoad() {
   gapi.load("client:auth2", initClient);
 }
 
-/**
- *  Initializes the API client library and sets up sign-in state
- *  listeners.
- */
+// /**
+//  *  Initializes the API client library and sets up sign-in state
+//  *  listeners.
+//  */
 function initClient() {
   gapi.client
     .init({
@@ -52,10 +52,10 @@ function initClient() {
     );
 }
 
-/**
- *  Called when the signed in status changes, to update the UI
- *  appropriately. After a sign-in, the API is called.
- */
+// /**
+//  *  Called when the signed in status changes, to update the UI
+//  *  appropriately. After a sign-in, the API is called.
+//  */
 function updateSigninStatus(isSignedIn) {
   if (isSignedIn) {
     authorizeButton.style.display = "none";
@@ -69,41 +69,42 @@ function updateSigninStatus(isSignedIn) {
   }
 }
 
-/**
- *  Sign in the user upon button click.
- */
+// /**
+//  *  Sign in the user upon button click.
+//  */
 function handleAuthClick(event) {
   gapi.auth2.getAuthInstance().signIn();
 }
 
-/**
- *  Sign out the user upon button click.
- */
+// /**
+//  *  Sign out the user upon button click.
+//  */
 function handleSignoutClick(event) {
   gapi.auth2.getAuthInstance().signOut();
 }
 
-/**
- * Append a pre element to the body containing the given message
- * as its text node. Used to display the results of the API call.
- *
- * @param {string} message Text to be placed in pre element.
- */
+// /**
+//  * Append a pre element to the body containing the given message
+//  * as its text node. Used to display the results of the API call.
+//  *
+//  * @param {string} message Text to be placed in pre element.
+//  */
 function appendPre(message) {
-  var pre = document.getElementById("content");
-  var textContent = document.createTextNode(message + "\n");
+  let pre = document.getElementById("content");
+  let textContent = document.createTextNode(message + "\n");
   pre.appendChild(textContent);
 }
 
-/**
- * Print the summary and start datetime/date of the next ten events in
- * the authorized user's calendar. If no events are found an
- * appropriate message is printed.
- */
+// /**
+//  * Print the summary and start datetime/date of the next ten events in
+//  * the authorized user's calendar. If no events are found an
+//  * appropriate message is printed.
+//  */
 function listUpcomingEvents() {
+    //Pull busy results for this week
   gapi.client.calendar.freebusy.query({
-      timeMin: "2019-02-17T00:00:00-07:00",
-      timeMax: "2019-02-23T23:59:00-07:00",
+      timeMin: new Date().toISOString(),
+      timeMax: getEndWeek(new Date()),
       timeZone:"America/Chicago",
       items: [{id: "primary"}]
   }).then(function(response){
@@ -113,19 +114,19 @@ function listUpcomingEvents() {
     .list({
       calendarId: "primary",
       timeMin: new Date().toISOString(),
+      timeMax: "2019-02-28T19:29:23.000Z", //Need to make this dynamic for 7 days - getting an error
       showDeleted: false,
       singleEvents: true,
-      maxResults: 10,
       orderBy: "startTime"
     })
     .then(function(response) {
-      var events = response.result.items;
+      let events = response.result.items;
       appendPre("Upcoming events:");
 
       if (events.length > 0) {
         for (i = 0; i < events.length; i++) {
-          var event = events[i];
-          var when = event.start.dateTime;
+          let event = events[i];
+          let when = event.start.dateTime;
           if (!when) {
             when = event.start.date;
           }
@@ -137,17 +138,26 @@ function listUpcomingEvents() {
     });
 }
 
-var event = {
+//
+///// My work
+//
+
+//returns the date of the end of this current week
+function getEndWeek(d){
+    d = new Date(d); 
+    let sevenDays = d.getDate() + 7;
+    return new Date(d.setDate(sevenDays));
+}
+
+let event = {
   summary: "",
   location: "5107 Avenue G. Austin Texas",
   description: "A chance to hear more about Google's developer products.",
   start: {
     dateTime: "",
-    timeZone:"America/Chicago",
   },
   end: {
     dateTime: "",
-    timeZone:"America/Chicago",
   }
 };
 
