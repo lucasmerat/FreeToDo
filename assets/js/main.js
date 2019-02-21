@@ -62,6 +62,7 @@ function updateSigninStatus(isSignedIn) {
     signoutButton.style.display = "block";
     newEventBox.style.display = "block";
     listUpcomingEvents();
+    displayBusyTimes();
   } else {
     authorizeButton.style.display = "block";
     signoutButton.style.display = "none";
@@ -102,21 +103,12 @@ function appendPre(message) {
 //  */
 function listUpcomingEvents() {
   //Pull busy results for this week
-  gapi.client.calendar.freebusy
-    .query({
-      timeMin: new Date().toISOString(),
-      timeMax: sevenDays(),
-      timeZone: "America/Chicago",
-      items: [{ id: "primary" }]
-    })
-    .then(function(response) {
-      console.log(response);
-    });
+  
   gapi.client.calendar.events
     .list({
       calendarId: "primary",
       timeMin: new Date().toISOString(),
-      timeMax: sevenDays(), //Need to make this dynamic for 7 days - getting an error
+      timeMax: sevenDays(),
       showDeleted: false,
       singleEvents: true,
       orderBy: "startTime"
@@ -144,6 +136,23 @@ function listUpcomingEvents() {
 ///// My work
 //
 
+function displayBusyTimes(){
+    $("#get-busy").on("click", function(){
+        gapi.client.calendar.freebusy
+        .query({
+          timeMin: new Date().toISOString(),
+          timeMax: sevenDays(),
+          items: [{ id: "primary" }]
+        })
+        .then(function(response) {
+            let busyTimes = response.result.calendars.primary.busy;
+            busyTimes.forEach(item => {
+                $("#busy-times").append(`Start of busy slot: ${item.start} <br> End of busy slot: ${item.end} <br>`)
+            })
+    
+        });
+    })
+}
 
 //returns the date of the end of this current week
 
@@ -176,7 +185,8 @@ function createEvent(startDate, endDate) {
     resource: event
   });
   request.execute(function(event) {
-    appendPre(`Event created: ${event.htmlLink}`);
+      console.log(event)
+    appendPre(`Event created: ${event.summary} on ${event.start.dateTime.substr(0,10)} at ${event.start.dateTime.substr(11,8)}`);
   });
 }
 
