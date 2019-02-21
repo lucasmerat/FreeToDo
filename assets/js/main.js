@@ -163,11 +163,21 @@
 
     function getDates(){
         let startDate = document.getElementById("date").value;
-        console.log(startDate)
-        let startTime = Number(startDate.substr(11,2));
-        let endTime = startTime + 1;
-        let endDate = startDate.substr(0,11) + String(endTime) + startDate.substr(13, startDate.length);
-        createEvent(startDate, endDate)
+        let duration = $("#duration option:selected").val();
+        //When duration is hours, add num of hours to date string for end date
+        if (duration === '1' || duration === '2'){
+            let startTime = Number(startDate.substr(11,2));
+            let endTime = startTime + duration;
+            let endDate = startDate.substr(0,11) + String(endTime) + startDate.substr(13, startDate.length);
+            createEvent(startDate, endDate)
+        //When in minutes, add those minutes to string
+        } else if (duration === '30'){
+            console.log(startDate);
+            let startTime = Number(startDate.substr(14,2));
+            let endTime = startTime + 30;
+            let endDate = startDate.substr(0,14) + String(endTime) + startDate.substr(16, startDate.length);
+            createEvent(startDate, endDate)
+        }
     }
 
     newEventButton.addEventListener("click", getDates);
