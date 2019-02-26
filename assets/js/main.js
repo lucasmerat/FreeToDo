@@ -250,32 +250,6 @@ function createEvent(startDate, endDate) {
   });
 }
 
-function getDates() {
-  let startDate = document.getElementById("date").value;
-  let duration = $("#duration option:selected").val();
-  //When duration is hours, add num of hours to date string for end date
-  if (duration === "1" || duration === "2") {
-    let startTime = Number(startDate.substr(11, 2));
-    let endTime = startTime + Number(duration);
-    let endDate =
-      startDate.substr(0, 11) +
-      String(endTime) +
-      startDate.substr(13, startDate.length);
-    console.log(startDate, endDate);
-    createEvent(startDate, endDate);
-    //When in minutes, add those minutes to string
-  } else if (duration === "30") {
-    console.log(startDate);
-    let startTime = Number(startDate.substr(14, 2));
-    let endTime = startTime + 30;
-    let endDate =
-      startDate.substr(0, 14) +
-      String(endTime) +
-      startDate.substr(16, startDate.length);
-    createEvent(startDate, endDate);
-  }
-}
-
 function getDates(){
     let dateEntered = document.getElementById("date").value;
     let duration = $("#duration option:selected").val();
