@@ -138,11 +138,11 @@ function listUpcomingEvents() {
 $("#get-busy").on("click", queryTimes);
 
 function queryTimes(){
-    console.log('ok')
+    let min = moment().toISOString();
+    let max = moment().add(12, 'h').toISOString()
+    console.log(max)
+    checkAvail(min,max);
 }
-
-console.log(moment().toISOString())
-
 
 function loopTimes(){
 
@@ -158,7 +158,8 @@ function checkAvail(min, max) {
     .then(
       function(response) {
         console.log("hey");
-        console.log(response);
+        console.log(moment(response.result.calendars.primary.busy[0].start).format("dddd, MMMM Do YYYY, h:mm:ss a"));
+        console.log(moment(response.result.calendars.primary.busy[0].end).format("dddd, MMMM Do YYYY, h:mm:ss a"));
       },
       function(err) {
           console.log(err.result.error.message)
