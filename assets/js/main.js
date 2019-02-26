@@ -135,11 +135,14 @@ function listUpcomingEvents() {
 ///// My work
 //
 
-$("#get-busy").on("click", queryTimes);
+document.getElementById("get-busy").addEventListener("click", queryTimes);
+
+let hours = 1;
 
 function queryTimes(){
-    let min = moment().toISOString();
-    let max = moment().add(12, 'h').toISOString()
+    let min = moment().add(hours,'h').toISOString();
+    console.log(hours)
+    let max = moment().add(hours+1, 'h').toISOString();
     console.log(max)
     checkAvail(min,max);
 }
@@ -147,6 +150,7 @@ function queryTimes(){
 function loopTimes(){
 
 }
+let hrs = 1;
 
 function checkAvail(min, max) {
   gapi.client.calendar.freebusy
@@ -157,12 +161,20 @@ function checkAvail(min, max) {
     })
     .then(
       function(response) {
-        console.log("hey");
-        console.log(moment(response.result.calendars.primary.busy[0].start).format("dddd, MMMM Do YYYY, h:mm:ss a"));
-        console.log(moment(response.result.calendars.primary.busy[0].end).format("dddd, MMMM Do YYYY, h:mm:ss a"));
+          let busySlot = response.result.calendars.primary.busy[0];
+          console.log(busySlot)
+        if(!busySlot){
+            createEvent(min,max);
+        } else{
+            hours++;
+            console.log(hours)
+            queryTimes(hours);
+        }
+        // console.log(moment(response.result.calendars.primary.busy[0].start).format("dddd, MMMM Do YYYY, h:mm:ss a"));
+        // console.log(moment(response.result.calendars.primary.busy[0].end).format("dddd, MMMM Do YYYY, h:mm:ss a"));
       },
       function(err) {
-          console.log(err.result.error.message)
+          console.log(err)
         if (err.result.error.message === "The specified time range is empty.") {
           console.log(`${min} - ${max} is a free slot`);
         }
