@@ -1,0 +1,25 @@
+{
+  "name": "freetodo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "flatpickr": "^4.5.2",
+    "googleapis": "^27.0.0",
+    "serve-static": "^1.13.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lucasmerat/FreeToDo.git"
+  },
+  "author": "Lucas Merat",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lucasmerat/FreeToDo/issues"
+  },
+  "homepage": "https://github.com/lucasmerat/FreeToDo#readme"
+}
