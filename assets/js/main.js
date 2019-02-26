@@ -62,7 +62,6 @@ function updateSigninStatus(isSignedIn) {
     signoutButton.style.display = "block";
     newEventBox.style.display = "block";
     listUpcomingEvents();
-    displayBusyTimes();
   } else {
     authorizeButton.style.display = "block";
     signoutButton.style.display = "none";
@@ -103,7 +102,7 @@ function appendPre(message) {
 //  */
 function listUpcomingEvents() {
   //Pull busy results for this week
-  
+
   gapi.client.calendar.events
     .list({
       calendarId: "primary",
@@ -136,31 +135,87 @@ function listUpcomingEvents() {
 ///// My work
 //
 
-function displayBusyTimes(){
-    $("#get-busy").on("click", function(){
-        gapi.client.calendar.freebusy
-        .query({
-          timeMin: new Date().toISOString(),
-          timeMax: sevenDays(),
-          items: [{ id: "primary" }]
-        })
-        .then(function(response) {
-            let busyTimes = response.result.calendars.primary.busy;
-            busyTimes.forEach(item => {
-                $("#busy-times").append(`Start of busy slot: ${item.start} <br> End of busy slot: ${item.end} <br>`)
-            })
-    
-        });
-    })
+$("#get-busy").on("click", queryTimes);
+
+function queryTimes(){
+    console.log('ok')
 }
+
+console.log(moment().toISOString())
+
+
+function loopTimes(){
+
+}
+
+function checkAvail(min, max) {
+  gapi.client.calendar.freebusy
+    .query({
+      timeMin: min,
+      timeMax: max,
+      items: [{ id: "primary" }]
+    })
+    .then(
+      function(response) {
+        console.log("hey");
+        console.log(response);
+      },
+      function(err) {
+          console.log(err.result.error.message)
+        if (err.result.error.message === "The specified time range is empty.") {
+          console.log(`${min} - ${max} is a free slot`);
+        }
+      }
+    );
+}
+
+// function displayBusyTimes(){
+//         gapi.client.calendar.freebusy
+//         .query({
+//           timeMin: new Date().toISOString(),
+//           timeMax: new Date().toISOString(),
+//           items: [{ id: "primary" }]
+//         })
+//         .then(function(response) {
+//             console.log("hey")
+//             console.log(response)
+//             let busyTimes = response.result.calendars.primary.busy;
+//             busyTimes.forEach(item => {
+//                 $("#busy-times").append(`Start of busy slot: ${item.start} <br> End of busy slot: ${item.end} <br>`)
+//             })},
+//             function(err){
+//                 if(err.result.error.message == "The specified time range is empty."){
+//                     console.log("This slot is free")
+//                 }
+//             });
+// }
+
+//Here I am going to make a function that loops through hours or minutes based on duration - when it finds a query response of error it will make foundtime true and then create an event at that time
+
+// function findTime() {
+//     let foundTime = false;
+//     while (foundTime === false){
+//         if ()
+//     }
+//     gapi.client.calendar.freebusy
+//         .query({
+//           timeMin: new Date().toISOString(),
+//           timeMax: sevenDays(),
+//           items: [{ id: "primary" }]
+//         })
+// }
 
 //returns the date of the end of this current week
 
-function sevenDays(){
-    let date = new Date();
-    date.setDate(date.getDate() + 7);
+function sevenDaysNoIso() {
+    let date = moment().add(7,'d');
+    return date;
+}
+
+function sevenDays() {
+    let date = moment().add(7,'d');
     return date.toISOString();
-    }
+  }
 
 let event = {
   summary: "",
@@ -185,8 +240,13 @@ function createEvent(startDate, endDate) {
     resource: event
   });
   request.execute(function(event) {
-      console.log(event)
-    appendPre(`Event created: ${event.summary} on ${event.start.dateTime.substr(0,10)} at ${event.start.dateTime.substr(11,8)}`);
+    console.log(event);
+    appendPre(
+      `Event created: ${event.summary} on ${event.start.dateTime.substr(
+        0,
+        10
+      )} at ${event.start.dateTime.substr(11, 8)}`
+    );
   });
 }
 
@@ -216,11 +276,26 @@ function getDates() {
   }
 }
 
+function getDates(){
+    let dateEntered = document.getElementById("date").value;
+    let duration = $("#duration option:selected").val();
+
+    if (duration === "1" || duration === "2") {
+        let startDate = moment(dateEntered).toISOString();
+        let endDate = moment(dateEntered).add(1, 'h').toISOString();
+        createEvent(startDate,endDate);
+    } else if (duration === "30") {
+        let startDate = moment(dateEntered).toISOString();
+        let endDate = moment(dateEntered).add(30, 'm').toISOString();;
+        createEvent(startDate,endDate);
+    }
+}
+
 newEventButton.addEventListener("click", getDates);
 $("#date").flatpickr({
   enableTime: true,
   altInput: true,
   time_24hr: false,
   altFormat: "F j, Y H:i",
-  dateFormat: "Y-m-dTH:i:00-07:00"
+  dateFormat: "Y-m-dTH:i:00"
 });

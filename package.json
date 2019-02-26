@@ -6,7 +6,8 @@
   "dependencies": {
     "flatpickr": "^4.5.2",
     "googleapis": "^27.0.0",
-    "serve-static": "^1.13.2"
+    "http-server": "^0.11.1",
+    "moment": "^2.24.0"
   },
   "devDependencies": {},
   "scripts": {
