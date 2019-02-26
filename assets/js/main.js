@@ -137,21 +137,23 @@ function listUpcomingEvents() {
 
 document.getElementById("get-busy").addEventListener("click", queryTimes);
 
-let hours = 1;
+let hours = 1; //Initilize 1 hour from now to start searching for a time
 
-function queryTimes(){
-    let min = moment().add(hours,'h').toISOString();
-    console.log(hours)
-    let max = moment().add(hours+1, 'h').toISOString();
-    console.log(max)
-    checkAvail(min,max);
+//Sets min and max times to query free-busy and see if slot is free on cal
+
+function queryTimes() {
+  let min = moment()
+    .add(hours, "h")
+    .toISOString();
+  console.log(hours);
+  let max = moment()
+    .add(hours + 1, "h")
+    .toISOString();
+  console.log(max);
+  checkAvail(min, max);
 }
 
-function loopTimes(){
-
-}
-let hrs = 1;
-
+//Seeks out if cal has availability in given 1 hr time slot
 function checkAvail(min, max) {
   gapi.client.calendar.freebusy
     .query({
@@ -160,24 +162,23 @@ function checkAvail(min, max) {
       items: [{ id: "primary" }]
     })
     .then(
+      //If the slot is empty, an event is created at that time, if not, the query function is called again for the next hour
       function(response) {
-          let busySlot = response.result.calendars.primary.busy[0];
-          console.log(busySlot)
-        if(!busySlot){
-            createEvent(min,max);
-        } else{
-            hours++;
-            console.log(hours)
-            queryTimes(hours);
+        let busySlot = response.result.calendars.primary.busy[0];
+        console.log(busySlot);
+        if (!busySlot) {
+          createEvent(min, max);
+          hours = 0;
+        } else {
+          hours++;
+          console.log(hours);
+          queryTimes(hours);
         }
         // console.log(moment(response.result.calendars.primary.busy[0].start).format("dddd, MMMM Do YYYY, h:mm:ss a"));
         // console.log(moment(response.result.calendars.primary.busy[0].end).format("dddd, MMMM Do YYYY, h:mm:ss a"));
       },
       function(err) {
-          console.log(err)
-        if (err.result.error.message === "The specified time range is empty.") {
-          console.log(`${min} - ${max} is a free slot`);
-        }
+        console.log(err);
       }
     );
 }
@@ -221,19 +222,19 @@ function checkAvail(min, max) {
 //returns the date of the end of this current week
 
 function sevenDaysNoIso() {
-    let date = moment().add(7,'d');
-    return date;
+  let date = moment().add(7, "d");
+  return date;
 }
 
 function sevenDays() {
-    let date = moment().add(7,'d');
-    return date.toISOString();
-  }
+  let date = moment().add(7, "d");
+  return date.toISOString();
+}
 
 let event = {
   summary: "",
-  location: "5107 Avenue G. Austin Texas",
-  description: "A chance to hear more about Google's developer products.",
+  location: "You tell me where",
+  description: "This event was created by FreeToDo",
   start: {
     dateTime: ""
   },
@@ -263,19 +264,23 @@ function createEvent(startDate, endDate) {
   });
 }
 
-function getDates(){
-    let dateEntered = document.getElementById("date").value;
-    let duration = $("#duration option:selected").val();
+function getDates() {
+  let dateEntered = document.getElementById("date").value;
+  let duration = $("#duration option:selected").val();
 
-    if (duration === "1" || duration === "2") {
-        let startDate = moment(dateEntered).toISOString();
-        let endDate = moment(dateEntered).add(1, 'h').toISOString();
-        createEvent(startDate,endDate);
-    } else if (duration === "30") {
-        let startDate = moment(dateEntered).toISOString();
-        let endDate = moment(dateEntered).add(30, 'm').toISOString();;
-        createEvent(startDate,endDate);
-    }
+  if (duration === "1" || duration === "2") {
+    let startDate = moment(dateEntered).toISOString();
+    let endDate = moment(dateEntered)
+      .add(1, "h")
+      .toISOString();
+    createEvent(startDate, endDate);
+  } else if (duration === "30") {
+    let startDate = moment(dateEntered).toISOString();
+    let endDate = moment(dateEntered)
+      .add(30, "m")
+      .toISOString();
+    createEvent(startDate, endDate);
+  }
 }
 
 newEventButton.addEventListener("click", getDates);
