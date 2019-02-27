@@ -1,9 +1,21 @@
 const {google} = require('googleapis');
+const express = require("express");
+
+const app = express();
+
+app.set('view engine', 'ejs');
+
+// app.get('/', function(req,res){
+//     res.render({url});
+// });
+
+app.listen(3000);
+
 
 const googleConfig = {
   clientId: '26822503413-ladr99bfvg408ec73jpa5tdhecgboehe.apps.googleusercontent.com', // e.g. asdfghjkljhgfdsghjk.apps.googleusercontent.com
   clientSecret: 'RqS2u0u-cfWCQsuEv9upyRFS', // e.g. _ASDFA%DFASDFASDFASD#FAD-
-  redirect: 'http://localhost:3000/' // this must match your google api settings
+  redirect: 'http://localhost:3000' // this must match your google api settings
 };
 
 /**
@@ -35,3 +47,10 @@ function urlGoogle() {
     const url = getConnectionUrl(auth);
     return url;
 }
+
+let url = urlGoogle();
+console.log(url)
+
+app.get('/', function(req,res){
+    res.render("index",{url})
+})

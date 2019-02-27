@@ -14,10 +14,11 @@
     <p>Google Calendar API Quickstart</p>
 
     <!--Add buttons to initiate auth sequence and sign out-->
-    <a href="https://accounts.google.com/o/oauth2/v2/auth?access_type=offline&prompt=consent&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fplus.me%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&response_type=code&client_id=26822503413-ladr99bfvg408ec73jpa5tdhecgboehe.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost%3A3000"><button id="authorize_button">Authorize</button></a>
-    <button id="signout_button" style="display: none;">Sign Out</button>
+
     <div id="new-event-box">
-      <h1>For testing - create and event</h1>
+      <h1>For testing - create events with click</h1>
+      <a href="<%= url %>"><button id="authorize_button">Authorize</button></a>
+      <button id="signout_button" style="display: none;">Sign Out</button>
       <button id="new_event">Create Event</button>
       <label>Name of event</label>
       <input type="text" id="name" />
@@ -51,7 +52,7 @@
     ></script>
     <script src="/node_modules/flatpickr/dist/flatpickr.min.js"></script>
 
-  <script src="assets/js/main.js"></script>
+  <!-- <script src="assets/js/main.js"></script> -->
   <!-- <script
       async
       defer
@@ -59,6 +60,6 @@
       onload="this.onload=function(){};handleClientLoad()"
       onreadystatechange="if (this.readyState === 'complete') this.onload()"
     ></script> -->
-    <script src="google-util.js"></script>
+    <script src="index.js"></script>
   </body>
 </html>
