@@ -135,26 +135,37 @@ function listUpcomingEvents() {
 ///// My work
 //
 
-document.getElementById("get-busy").addEventListener("click", queryTimes);
+document.getElementById("get-busy").addEventListener("click", checkDuration);
 
-let hours = 1; //Initilize 1 hour from now to start searching for a time
+
+
+function checkDuration () {
+  let duration = Number($("#duration option:selected").val());
+  if(duration === 1|| duration === 2){
+    console.log("Querying times")
+    queryTimes(duration, "h");
+  } else if(duration === 30){
+    queryTimes(duration, "m")
+  }
+}
 
 //Sets min and max times to query free-busy and see if slot is free on cal
 
-function queryTimes() {
-  let min = moment()
-    .add(hours, "h")
-    .toISOString();
-  console.log(hours);
-  let max = moment()
-    .add(hours + 1, "h")
-    .toISOString();
-  console.log(max);
-  checkAvail(min, max);
+function queryTimes(duration, units) {
+  let min = moment().add(duration, units).minutes(00).toISOString();
+  if(units === "h"){
+    let max = moment().add(duration + 1, units).minutes(00).toISOString()
+    checkAvail(min, max, duration, units);
+    console.log(min, max, duration, units);
+  } else{
+    let max = moment().add(duration + 30, units).minutes(30).toISOString()
+    checkAvail(min, max, duration, units);
+    console.log(min, max, duration, units);
+  }
 }
 
 //Seeks out if cal has availability in given 1 hr time slot
-function checkAvail(min, max) {
+function checkAvail(min, max, duration, units) {
   gapi.client.calendar.freebusy
     .query({
       timeMin: min,
@@ -168,11 +179,15 @@ function checkAvail(min, max) {
         console.log(busySlot);
         if (!busySlot) {
           createEvent(min, max);
-          hours = 0;
-        } else {
-          hours++;
-          console.log(hours);
-          queryTimes(hours);
+          return;
+        }
+        if(units === 'h'){
+          console.log(duration, units);
+          duration++;
+          queryTimes(duration, units);
+        } else if(units === 'm'){
+          duration+=30
+          queryTimes(duration,units)
         }
         // console.log(moment(response.result.calendars.primary.busy[0].start).format("dddd, MMMM Do YYYY, h:mm:ss a"));
         // console.log(moment(response.result.calendars.primary.busy[0].end).format("dddd, MMMM Do YYYY, h:mm:ss a"));
@@ -204,21 +219,6 @@ function checkAvail(min, max) {
 //             });
 // }
 
-//Here I am going to make a function that loops through hours or minutes based on duration - when it finds a query response of error it will make foundtime true and then create an event at that time
-
-// function findTime() {
-//     let foundTime = false;
-//     while (foundTime === false){
-//         if ()
-//     }
-//     gapi.client.calendar.freebusy
-//         .query({
-//           timeMin: new Date().toISOString(),
-//           timeMax: sevenDays(),
-//           items: [{ id: "primary" }]
-//         })
-// }
-
 //returns the date of the end of this current week
 
 function sevenDaysNoIso() {
@@ -242,6 +242,7 @@ let event = {
     dateTime: ""
   }
 };
+
 
 function createEvent(startDate, endDate) {
   let eventName = document.getElementById("name").value;

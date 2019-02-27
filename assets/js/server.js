@@ -7,7 +7,6 @@ fs.readFile('../../index.html', function (err, html) {
         throw err; 
     }       
     http.createServer(function(request, response) {  
-        console.log(response)
         response.writeHeader(200, {"Content-Type": "text/html"});  
         response.write(html);  
         response.end();  
