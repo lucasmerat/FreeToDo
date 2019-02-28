@@ -30,8 +30,7 @@ function createConnection() {
 }
 
 const defaultScope = [
-    'https://www.googleapis.com/auth/plus.me',
-    'https://www.googleapis.com/auth/userinfo.email',
+    'https://www.googleapis.com/auth/calendar'
   ];
 
 function getConnectionUrl(auth) {
