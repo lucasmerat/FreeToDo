@@ -16,7 +16,7 @@ app.listen(3000)
 
 
 // If modifying these scopes, delete token.json.
-const SCOPES = ['https://www.googleapis.com/auth/calendar.readonly'];
+const SCOPES = ['https://www.googleapis.com/auth/calendar'];
 // The file token.json stores the user's access and refresh tokens, and is
 // created automatically when the authorization flow completes for the first
 // time.
@@ -71,6 +71,7 @@ function getAccessToken(oAuth2Client, callback) {
       oAuth2Client.setCredentials(token);
       // Store the token to disk for later program executions
       fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
+        console.log(token)
         if (err) return console.error(err);
         console.log('Token stored to', TOKEN_PATH);
       });
